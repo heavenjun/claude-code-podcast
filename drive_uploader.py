@@ -27,16 +27,28 @@ def _build_service(client_id: str, client_secret: str, refresh_token: str):
 
 
 def _find_or_create_folder(service, name: str, parent_id: str | None) -> str:
-    query = f"name='{name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+    # Escape single quotes in name for Drive query syntax
+    safe_name = name.replace("'", "\\'")
+    query = (
+        f"name='{safe_name}' "
+        f"and mimeType='application/vnd.google-apps.folder' "
+        f"and trashed=false"
+    )
     if parent_id:
         query += f" and '{parent_id}' in parents"
+    else:
+        query += " and 'root' in parents"
 
-    results = service.files().list(q=query, fields="files(id, name)").execute()
+    results = (
+        service.files()
+        .list(q=query, fields="files(id, name)", corpora="user")
+        .execute()
+    )
     files = results.get("files", [])
     if files:
         return files[0]["id"]
 
-    metadata = {
+    metadata: dict = {
         "name": name,
         "mimeType": "application/vnd.google-apps.folder",
     }

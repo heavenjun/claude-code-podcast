@@ -6,6 +6,16 @@ from google.genai import types
 from config import SPEAKERS, PODCAST_TOPIC, GEMINI_SCRIPT_MODEL
 
 
+def _strip_fences(text: str) -> str:
+    """Remove markdown code fences if present."""
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+    if text.endswith("```"):
+        text = text.rsplit("```", 1)[0]
+    return text.strip()
+
+
 def generate_script(research: dict, api_key: str) -> list[dict]:
     client = genai.Client(api_key=api_key)
 
@@ -51,23 +61,32 @@ def generate_script(research: dict, api_key: str) -> list[dict]:
         ),
     )
 
-    raw = response.text.strip()
-    # Strip markdown fences
-    if raw.startswith("```"):
-        raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
-    if raw.endswith("```"):
-        raw = raw.rsplit("```", 1)[0]
+    raw = response.text
+    if not raw:
+        raise ValueError("Script model returned empty response.")
 
-    script = json.loads(raw.strip())
+    raw = _strip_fences(raw)
 
-    # Validate structure
+    try:
+        script = json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise ValueError(
+            f"Script model did not return valid JSON: {e}\n\nRaw output:\n{raw[:500]}"
+        ) from e
+
+    # Validate and filter turns
     valid = []
     speaker_names = {s["name"] for s in SPEAKERS}
     for turn in script:
         if isinstance(turn, dict) and "speaker" in turn and "text" in turn:
             if turn["speaker"] in speaker_names:
                 valid.append({"speaker": turn["speaker"], "text": turn["text"]})
+
     if not valid:
-        raise ValueError("Script generation returned no valid turns.")
+        raise ValueError(
+            f"Script generation returned no valid turns. "
+            f"Got {len(script)} raw turns with speakers: "
+            f"{list({t.get('speaker') for t in script if isinstance(t, dict)})}"
+        )
 
     return valid

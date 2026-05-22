@@ -6,6 +6,15 @@ from google.genai import types
 from config import PODCAST_TOPIC, GEMINI_RESEARCH_MODEL
 
 
+def _strip_fences(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+    if text.endswith("```"):
+        text = text.rsplit("```", 1)[0]
+    return text.strip()
+
+
 def research_version(version: str, release_notes: str, api_key: str) -> dict:
     client = genai.Client(api_key=api_key)
 
@@ -50,18 +59,15 @@ def research_version(version: str, release_notes: str, api_key: str) -> dict:
         ),
     )
 
-    raw_text = response.text.strip()
+    raw_text = response.text
+    if not raw_text:
+        print("Warning: research model returned empty text response.")
+        return {"version": version, "release_notes": release_notes, "raw_research": ""}
 
-    # Try to parse as JSON; fall back to storing as plain text
-    parsed = None
+    raw_text = _strip_fences(raw_text)
+
     try:
-        # Strip possible markdown code fences
-        clean = raw_text
-        if clean.startswith("```"):
-            clean = clean.split("\n", 1)[1] if "\n" in clean else clean[3:]
-        if clean.endswith("```"):
-            clean = clean.rsplit("```", 1)[0]
-        parsed = json.loads(clean.strip())
+        parsed = json.loads(raw_text)
     except Exception:
         parsed = {"raw_research": raw_text}
 
