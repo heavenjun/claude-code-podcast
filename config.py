@@ -23,11 +23,11 @@ OUTPUT_DIR = "output"
 TTS_CHUNK_SIZE = 8
 
 # Gemini model for research + script generation
-GEMINI_RESEARCH_MODEL = "gemini-2.0-flash"
-GEMINI_SCRIPT_MODEL = "gemini-2.0-flash"
+GEMINI_RESEARCH_MODEL = "gemini-2.5-flash-lite"
+GEMINI_SCRIPT_MODEL = "gemini-2.5-flash-lite"
 
 # Gemini model for TTS
-GEMINI_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+GEMINI_TTS_MODEL = "gemini-2.5-flash-lite"
 
 # Audio settings (Gemini TTS outputs PCM 24kHz 16-bit mono)
 AUDIO_SAMPLE_RATE = 24000
