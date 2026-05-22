@@ -16,6 +16,7 @@ from config import (
     SPEAKERS,
     TTS_CHUNK_SIZE,
 )
+from utils import call_with_retry
 
 
 def _pcm_to_wav(pcm_bytes: bytes, sample_rate: int) -> bytes:
@@ -63,7 +64,8 @@ def _build_speaker_configs() -> list:
 def _generate_chunk(turns: list[dict], client: genai.Client) -> bytes:
     text = "\n".join(f"{t['speaker']}: {t['text']}" for t in turns)
 
-    response = client.models.generate_content(
+    response = call_with_retry(
+        client.models.generate_content,
         model=GEMINI_TTS_MODEL,
         contents=text,
         config=types.GenerateContentConfig(

@@ -4,6 +4,7 @@ import json
 from google import genai
 from google.genai import types
 from config import SPEAKERS, PODCAST_TOPIC, GEMINI_SCRIPT_MODEL
+from utils import call_with_retry
 
 
 def _strip_fences(text: str) -> str:
@@ -53,7 +54,8 @@ def generate_script(research: dict, api_key: str) -> list[dict]:
 ]
 """
 
-    response = client.models.generate_content(
+    response = call_with_retry(
+        client.models.generate_content,
         model=GEMINI_SCRIPT_MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(
