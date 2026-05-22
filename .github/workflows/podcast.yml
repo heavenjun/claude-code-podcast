@@ -1,0 +1,54 @@
+name: Claude Code Podcast Generator
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every Monday at 09:00 JST (00:00 UTC)
+    - cron: "0 0 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-podcast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install FFmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run podcast generator
+        id: generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: python main.py
+
+      - name: Commit output files
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # Stage JSON artifacts and version tracker (audio files excluded by .gitignore)
+          git add output/ processed_versions.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "Nothing new to commit."
+          else
+            git commit -m "Add podcast output: ${{ env.VERSION }} [skip ci]"
+            git push
+          fi
