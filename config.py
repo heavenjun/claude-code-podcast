@@ -27,7 +27,7 @@ GEMINI_RESEARCH_MODEL = "gemini-2.5-flash-lite"
 GEMINI_SCRIPT_MODEL = "gemini-2.5-flash-lite"
 
 # Gemini model for TTS
-GEMINI_TTS_MODEL = "gemini-2.5-flash-lite"
+GEMINI_TTS_MODEL = "gemini-2.5-flash-preview-tts"
 
 # Audio settings (Gemini TTS outputs PCM 24kHz 16-bit mono)
 AUDIO_SAMPLE_RATE = 24000
