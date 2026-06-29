@@ -1,0 +1,41 @@
+{
+  "version": "v2.1.195",
+  "release_notes": "## What's changed\n\n- Added `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` to disable mouse click/drag/hover in fullscreen mode while keeping wheel scroll\n- Fixed hook matchers with hyphenated identifiers (e.g. `code-reviewer`, `mcp__brave-search`) accidentally substring-matching — they now exact-match. Use `mcp__brave-search__.*` to match all tools from a hyphenated MCP server.\n- Fixed voice dictation on macOS capturing silence in long-running sessions after the default input device changes\n- Fixed voice dictation auto-submit never firing for languages written without spaces (Japanese, Chinese, Thai)\n- Fixed external plugins enabled only by project `.claude/settings.json` not requiring explicit install consent on every loader path\n- Fixed `/plugin` Enable/Disable not working when a plugin's `plugin.json` `name` differs from its marketplace entry name\n- Fixed background jobs disappearing from `claude agents` or losing data when written by a newer Claude Code version\n- Fixed reopening a crashed background task showing a blank screen for up to 5 seconds instead of its restart\n- Fixed background agent daemons running unreachable when the control socket fails to start, blocking restarts\n- Improved voice mode on Linux: now distinguishes \"no microphone\" from \"SoX not installed\" when SoX is present but no audio capture device exists\n- Improved `claude agents` completed list to fill available vertical space; on short terminals the header compacts so live sessions stay visible\n- Improved Remote session startup with a provisioning checklist while the container starts\n",
+  "summary": "Claude Code v2.1.195は、フルスクリーンモードでのマウス操作の無効化、macOSの音声入力の安定化、スペースを含まない言語での自動送信の修正など、ユーザーエクスペリエンスと安定性を向上させる多数の変更を導入しました。また、プラグイン管理やバックグラウンドジョブの信頼性も強化されています。",
+  "key_features": [
+    {
+      "title": "フルスクリーンモードでのマウス操作無効化 (`CLAUDE_CODE_DISABLE_MOUSE_CLICKS`)",
+      "detail": "フルスクリーンモードでマウスのクリック、ドラッグ、ホバー操作を無効にしつつ、ホイールスクロールは引き続き利用可能にするための新しい設定 `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` が追加されました。これにより、意図しない操作を防ぎ、コーディングに集中しやすくなります。"
+    },
+    {
+      "title": "フックマッチングの精度向上",
+      "detail": "ハイフン付きの識別子（例: `code-reviewer`, `mcp__brave-search`）に対するフックマッチングが、意図しない部分一致ではなく、正確な一致を行うように修正されました。これにより、より正確なツールやプラグインの指定が可能になります。すべての一致を対象とする場合は `mcp__brave-search__.*` のような指定が推奨されています。"
+    }
+  ],
+  "bug_fixes": [
+    "macOSでの音声入力において、デフォルト入力デバイスが変更された後の長時間のセッションで無音状態をキャプチャしてしまう問題を修正しました。",
+    "日本語、中国語、タイ語など、スペースで区切られない言語において、音声入力の自動送信が発火しない問題を修正しました。",
+    "プロジェクトの `.claude/settings.json` のみで有効化されていた外部プラグインが、毎回明示的なインストール同意を要求しない問題を修正しました。",
+    "プラグインの `plugin.json` の `name` がマーケットプレイスのエントリー名と異なる場合に、`/plugin` の有効化/無効化が機能しない問題を修正しました。",
+    "新しいClaude Codeバージョンによって書き込まれたバックグラウンドジョブが、`claude agents` から消えたり、データが失われたりする問題を修正しました。",
+    "クラッシュしたバックグラウンドタスクを再オープンした際に、再起動ではなく最大5秒間、空白画面が表示される問題を修正しました。",
+    "コントロールソケットの起動に失敗し、再起動がブロックされる場合に、バックグラウンドエージェントデーモンが到達不能になる問題を修正しました。"
+  ],
+  "improvements": [
+    "Linuxでの音声モードを改善し、「マイクなし」と「SoXがインストールされていない」状態を区別できるようになりました。これは、SoXが存在してもオーディオキャプチャデバイスが存在しない場合に有用です。",
+    " `claude agents` の完了リストが、利用可能な垂直スペースを埋めるように改善されました。短いターミナルではヘッダーがコンパクトになり、ライブセッションが常に表示されるようになります。",
+    "コンテナ起動中にプロビジョニングチェックリストを表示するように、リモートセッションの起動を改善しました。"
+  ],
+  "community_reactions": [
+    {
+      "source": "X/Twitter",
+      "reaction": "Claude Code v2.1.195のリリースに関する直接的なコミュニティの反応は、現時点では大規模な議論や興奮を示す投稿は見つかりませんでした。ただし、安定性向上やバグ修正は、潜在的なユーザーや既存ユーザーからの肯定的な評価につながる可能性があります。"
+    },
+    {
+      "source": "技術ブログ/フォーラム",
+      "reaction": "特定の技術ブログやフォーラムでのClaude Code v2.1.195に関する詳細なレビューや言及は、現時点では確認できませんでした。しかし、音声入力の改善やプラグイン管理の修正などは、該当する機能を利用している開発者にとって有益な変更であると考えられます。"
+    }
+  ],
+  "significance": "Claude Code v2.1.195は、前バージョンからの継続的な安定性とユーザーエクスペリエンスの向上に焦点を当てたマイナーアップデートです。特に、日本語などのスペースを含まない言語での音声入力の修正は、国際的なユーザーにとって大きな恩恵となります。また、フックマッチングの精度向上は、より複雑な開発環境でのツールの利用を容易にします。全体として、開発者の生産性を損なう可能性のある細かいバグを修正し、よりスムーズな開発体験を提供することを目指しています。",
+  "impact_on_workflow": "このバージョンアップにより、特にmacOSやLinux環境で音声入力を利用する開発者は、より安定した利用体験を得られるでしょう。また、日本語話者にとっては、音声入力の自動送信の修正は、コーディング中のメモ取りやコマンド入力の効率を向上させる可能性があります。プラグイン管理の安定化は、カスタム開発環境を構築している開発者にとって、より信頼性の高いプラグイン導入を可能にします。フルスクリーンモードでのマウス操作の無効化は、意図しない操作を防ぎ、コーディングへの集中度を高めることで、ワークフローの質を向上させる可能性があります。"
+}
